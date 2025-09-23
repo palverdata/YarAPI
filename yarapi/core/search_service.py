@@ -32,12 +32,6 @@ async def run_search(
     since_iso = since_date.isoformat()
     until_iso = until_date.isoformat()
 
-    # cache_key = serialize_params(params)
-
-    # @lru cache with auto expiry of 1h
-    # if mycache["cache_key"]:
-    #     return cached
-
     # 2. Select the Searcher and Post-Processor based on the data source
     if datasource == DataSource.twitter:
         searcher = XSearcher(
@@ -85,8 +79,5 @@ async def run_search(
     results = await post_processor.process(
         raw_output_filename=None, processed_output_filename=None, save_raw=False
     )
-
-    # stored the results in cache
-    # mycache["cache_key"] = results
 
     return results
