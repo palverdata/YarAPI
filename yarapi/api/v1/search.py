@@ -25,14 +25,11 @@ async def search_endpoint(
     try:
         results = await run_search(datasource, request)
         return SearchResponse(results_count=len(results), data=results)
-    except ValueError as e:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
     except Exception as e:
-        # In a production environment, log the error instead of printing it.
         print(f"Unexpected server error: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="An internal server error occurred.",
+            detail=str(e),
         )
 
 

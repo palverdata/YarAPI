@@ -4,6 +4,9 @@ from fastapi.responses import RedirectResponse
 router = APIRouter()
 
 
-@router.get("/")
+@router.get(
+    "/",
+    include_in_schema=False,
+)
 async def index_endpoint():
-    return RedirectResponse(url="/docs")
+    return RedirectResponse(url="/docs", status_code=302)

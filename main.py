@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from yarapi.api.v1 import search
 from yarapi.api import router as index_router
 from yarapi.utils.env import rename_envs
+from yarapi.utils.swagger import register_custom_swagger
 
 rename_envs()
 
@@ -12,6 +13,8 @@ app = FastAPI(
 
 app.include_router(search.router, prefix="/v1", tags=["Search"])
 app.include_router(index_router, tags=["Index"])
+
+app.openapi = lambda: register_custom_swagger(app)
 
 if __name__ == "__main__":
     import uvicorn

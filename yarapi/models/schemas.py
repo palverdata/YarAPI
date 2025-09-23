@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 from typing import List, Optional, Literal
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, Field
 from enum import Enum
 
 
@@ -24,17 +24,21 @@ class SearchRequest(BaseModel):
         1, gt=0, description="Date pagination interval in days (must be > 0)."
     )
     relative_interval: Optional[str] = Field(
-        None,
         pattern=r"^\d+[hdmMyY]$",
-        description="Relative time interval (e.g., '7d', '1m'). Overrides 'since' and 'until'.",
+        description="Relative time interval (e.g., '7d', '1m'). Overrides 'since' and 'until'. Does not work for Twitter.",
+        default="7d",
     )
     max_results: int = Field(
         1000, le=10000, description="Maximum number of results (limit 10000)."
     )
     country: str = Field(
-        "br", description="Country for the search (ISO 3166-1 alpha-2 format)."
+        "br",
+        description="Country for the search (ISO 3166-1 alpha-2 format). Does not work for Twitter.",
     )
-    lang: str = Field("pt", description="Language for the search.")
+    lang: str = Field(
+        "pt",
+        description="Language for the search. Does not work for Twitter, pass it on the query as lang:pt.",
+    )
     sort: Literal["Top", "Latest"] = Field(
         "Top", description="Sort mode (used only for Twitter)."
     )
