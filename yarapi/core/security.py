@@ -5,7 +5,7 @@ from itsdangerous import URLSafeTimedSerializer, SignatureExpired, BadTimeSignat
 
 from yarapi.core.database import users_collection
 from yarapi.models.users import UserInDB
-from config import config
+from yarapi.config import config
 
 # --- Configuration ---
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")

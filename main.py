@@ -1,5 +1,8 @@
 from fastapi import FastAPI
 from yarapi.api.v1 import search
+from yarapi.utils.env import rename_envs
+
+rename_envs()
 
 app = FastAPI(
     title="Open Sea Search API",

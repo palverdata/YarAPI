@@ -2,7 +2,7 @@ import motor.motor_asyncio
 import pymongo
 from pymongo.collection import Collection
 
-from config import config
+from yarapi.config import config
 
 client = motor.motor_asyncio.AsyncIOMotorClient(config.mongo_url)
 pymongo_client = pymongo.MongoClient(config.mongo_url)

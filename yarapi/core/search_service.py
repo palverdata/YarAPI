@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import List, Dict, Any
 
-from config import config
+from yarapi.config import config
 from yarapi.models.schemas import SearchRequest, DataSource
 from yarapi.utils.time import parse_relative_interval
 
@@ -12,12 +12,6 @@ from open_sea.post_processing.facebook import FacebookPostProcessing
 from open_sea.post_processing.tiktok import TikTokPostProcessing
 from open_sea.post_processing.youtube import YouTubePostProcessing
 from open_sea.post_processing.x import XPostProcessing
-
-import os
-
-os.environ["SERP_KEY"] = config.SERPAPI_KEY
-os.environ["TWITTERAPI_TOKEN"] = config.TWITTER_API_TOKEN
-os.environ["APIFY_TOKEN"] = config.APIFY_KEY
 
 
 async def run_search(
