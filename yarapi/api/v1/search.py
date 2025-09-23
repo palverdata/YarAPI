@@ -3,31 +3,9 @@ from fastapi import APIRouter, HTTPException, status, Depends
 from yarapi.models.schemas import SearchRequest, DataSource, SearchResponse
 from yarapi.core.search_service import run_search
 from yarapi.core.security import require_api_user
+from yarapi.core.cache import cache
 
 router = APIRouter()
-
-
-class MyCache:
-    _default_ttl: int
-
-    def __init__(self, default_ttl=1800):
-        self._default_ttl = default_ttl
-
-    def exists(self, key):
-        return key in self.__dict__
-
-    def get(self, key):
-        return self.__dict__.get(key, None)
-
-    def set(self, key, value, ttl=None):
-        print(f"Setting cache key: {key} with TTL: {ttl or self._default_ttl}")
-        _ttl = ttl or self._default_ttl
-
-        self.__dict__[key] = value
-        # Note: TTL handling is not implemented in this simple example
-
-
-global_cache = MyCache(default_ttl=3600)  # 1 hour TTL
 
 
 @router.post(
@@ -39,7 +17,6 @@ async def search_endpoint(
     datasource: DataSource,
     request: SearchRequest,
 ):
-    global global_cache
     """
     Main endpoint to perform searches on different data sources.
 
@@ -47,21 +24,24 @@ async def search_endpoint(
     - **request body**: Contains the search parameters, such as queries, time range, and filters.
     """
     try:
-        serialized_params = str(request.dict())
+        cache_key = f"{datasource.value}:{cache.serialize_key(request.dict())}"
 
-        if global_cache.exists(serialized_params):
-            print("Returning cached results")
-            cached_results = global_cache.get(serialized_params)
+        cached, ttl_left = cache.get_with_ttl(cache_key)
 
+        if cached is not None:
             return SearchResponse(
-                results_count=len(cached_results),
-                data=cached_results,
-                headers={"X-Cache": "HIT"},
+                results_count=len(cached),
+                data=cached,
+                headers={
+                    "X-Cache": "HIT",
+                    "X-Cache-TTL-Remaining": str(ttl_left),
+                    "Cache-Control": f"public, max-age={ttl_left}",
+                },
             )
 
         results = await run_search(datasource, request)
 
-        global_cache.set(serialized_params, results)
+        cache.set(cache_key, results)
 
         return SearchResponse(results_count=len(results), data=results)
     except Exception as e:
