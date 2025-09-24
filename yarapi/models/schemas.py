@@ -63,3 +63,25 @@ class SearchResponse(BaseModel):
     status: str = "success"
     results_count: int
     data: List[dict]
+
+
+class ProfileInput(BaseModel):
+    """Model for profile endpoint input.
+
+    - identifier: username or url
+    """
+
+    identifier: str = Field(
+        ..., description="Username or profile URL for the profile lookup"
+    )
+
+
+class CommentsInput(BaseModel):
+    """Model for comments endpoint input.
+
+    - identifier: post id or post url
+    - amount: number of comments to retrieve
+    """
+
+    identifier: str = Field(..., description="Post ID or post URL for comments lookup")
+    amount: int = Field(10, gt=0, description="Number of comments to retrieve")
