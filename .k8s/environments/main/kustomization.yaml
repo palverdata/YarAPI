@@ -7,5 +7,5 @@ resources:
   - ../../base
 
 images:
-  - name: palverdata/hati
+  - name: palverdata/yarapi
     newTag: d858516c81ffcca35f868a58fcbcb85bb93d457f
