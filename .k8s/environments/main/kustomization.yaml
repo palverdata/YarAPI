@@ -8,4 +8,4 @@ resources:
 
 images:
   - name: palverdata/hati
-    newTag: 5d36921970aa444eca6a3f04da07e252cda3b033
+    newTag: d858516c81ffcca35f868a58fcbcb85bb93d457f
