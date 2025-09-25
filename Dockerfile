@@ -5,7 +5,9 @@ FROM python:3.11
 ARG POETRY_REQUESTS_TIMEOUT=1200
 
 RUN apt-get update && \
-    apt-get install -y git python3-dev
+    apt-get install -y git python3-dev openssh-client && \
+    mkdir -p /root/.ssh && \
+    ssh-keyscan github.com >> /root/.ssh/known_hosts
 
 WORKDIR /app
 
