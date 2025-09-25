@@ -1,0 +1,19 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: yarapi-virtual-service
+spec:
+  hosts:
+    - yarapi.palver.com.br
+  gateways:
+    - istio-system/istio-https-gateway
+    - istio-system/palver-com-br-gateway
+  http:
+    - match:
+        - uri:
+            prefix: "/"
+      route:
+        - destination:
+            host: yarapi.yarapi.svc.cluster.local
+            port:
+              number: 3000

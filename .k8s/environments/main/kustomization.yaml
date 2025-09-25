@@ -1,0 +1,11 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: hati
+
+resources:
+  - ../../base
+
+images:
+  - name: palverdata/hati
+    newTag: 5d36921970aa444eca6a3f04da07e252cda3b033

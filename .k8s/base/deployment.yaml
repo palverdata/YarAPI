@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: yarapi
+spec:
+  selector:
+    matchLabels:
+      app: yarapi
+  template:
+    metadata:
+      labels:
+        app: yarapi
+    spec:
+      imagePullSecrets:
+        - name: dockerhub-palverdata
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: palver.com.br/purpose
+                    operator: In
+                    values:
+                      - platform
+      tolerations:
+        - key: palver.com.br/purpose
+          value: platform
+          effect: NoSchedule
+          operator: Equal
+      containers:
+        - name: yarapi
+          image: palverdata/yarapi
+          envFrom:
+            - configMapRef:
+                name: yarapi-env
+          resources:
+            limits:
+              cpu: "500m"
+              memory: "128Mi"
+            requests:
+              cpu: "32m"
+              memory: "64Mi"
+          ports:
+            - name: http
+              containerPort: 3000

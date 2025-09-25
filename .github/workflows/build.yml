@@ -1,0 +1,56 @@
+name: push_artifact
+
+on:
+  push:
+    branches:
+      - main
+      - staging
+
+env:
+  BRANCH: ${{ github.ref_name }}
+  REPOSITORY: yarapi
+
+jobs:
+  login-build-push:
+    name: push_artifact
+    permissions: write-all
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: "Docker build"
+        run: |-
+          docker build \
+            $([ $BRANCH = "main" ] && echo "--tag "palverdata/${REPOSITORY}:latest"") \
+            --tag "palverdata/$REPOSITORY:$GITHUB_SHA" \
+            --tag "palverdata/$REPOSITORY:$BRANCH" \
+            . -f Dockerfile
+      - uses: "docker/login-action@v1"
+        name: "Docker login"
+        with:
+          registry: "docker.io"
+          username: palverdata
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: "Docker push"
+        id: image
+        run: |-
+          docker push -a "palverdata/$REPOSITORY"
+
+          echo "::set-output name=tag::$GITHUB_SHA"
+      - name: Update image tag
+        env:
+          TAG: ${{ steps.image.outputs.tag }}
+        run: |
+          wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/local/bin/yq && chmod +x /usr/local/bin/yq
+          yqblank() {
+            yq "$1" "$2" | diff -B "$2" - | patch "$2" -
+          }
+
+          yqblank ".images[0].newTag = \"$TAG\"" .k8s/environments/$BRANCH/kustomization.yaml
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add .k8s/environments/$BRANCH
+          git commit -m "ci($BRANCH): update image tag"
+          git push
