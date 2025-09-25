@@ -1352,7 +1352,7 @@ zendriver = ">=0.5.1,<0.6.0"
 
 [package.source]
 type = "git"
-url = "https://github.com/palverdata/serp_open_sea.git"
+url = "ssh://git@github.com/palverdata/serp_open_sea.git"
 reference = "HEAD"
 resolved_reference = "3e7e84da893f3005641a216dbc4be3d794f4eeaa"
 
@@ -2512,4 +2512,4 @@ websockets = ">=14.0"
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.10,<3.12"
-content-hash = "d72892f150dd884b6d9cc6665955f1a87a64b67e4382c44bff381dc5f23785c3"
+content-hash = "106e6a2bb06e728b1dd36307458c78a7c4a96d60944295def39dcb550e39fe0e"
