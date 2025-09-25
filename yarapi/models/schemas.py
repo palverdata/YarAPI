@@ -90,9 +90,10 @@ class CommentsInput(BaseModel):
 class TimeseriesInput(BaseModel):
     """Model for timeseries endpoint input.
 
-    - identifier: username or url
-    - since: start date for the timeseries data
-    - until: end date for the timeseries data
+    - query: formatted query of provided datasource
+    - granularity: minute, hour, day
+    - since: start datetime
+    - until: end datetime
     """
 
     query: str = Field(
