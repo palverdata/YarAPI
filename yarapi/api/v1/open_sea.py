@@ -6,11 +6,13 @@ from yarapi.models.schemas import (
     SearchResponse,
     ProfileInput,
     CommentsInput,
+    TimeseriesInput,
 )
 from yarapi.core.search_service import (
     run_search,
     run_profile_search,
     run_comments_search,
+    run_timeseries_search,
 )
 from yarapi.core.security import require_api_user
 from yarapi.core.cache import cache
@@ -130,6 +132,43 @@ async def comments_endpoint(datasource: DataSource, request: CommentsInput):
             )
 
         results = await run_comments_search(datasource, request)
+        cache.set(cache_key, results)
+
+        return SearchResponse(results_count=len(results), data=results)
+    except Exception as e:
+        print(f"Unexpected server error: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
+        )
+
+
+@router.post(
+    "/{datasource}/timeseries",
+    response_model=SearchResponse,
+    dependencies=[Depends(require_api_user)],
+)
+async def timeseries_endpoint(datasource: DataSource, request: TimeseriesInput):
+    """
+    Retrieves timeseries data for a profile on a specific data source.
+    """
+    try:
+        cache_key = (
+            f"{datasource.value}:timeseries:{cache.serialize_key(request.dict())}"
+        )
+        cached, ttl_left = cache.get_with_ttl(cache_key)
+
+        if cached is not None:
+            return SearchResponse(
+                results_count=len(cached),
+                data=cached,
+                headers={
+                    "X-Cache": "HIT",
+                    "X-Cache-TTL-Remaining": str(ttl_left),
+                    "Cache-Control": f"public, max-age={ttl_left}",
+                },
+            )
+
+        results = await run_timeseries_search(datasource, request)
         cache.set(cache_key, results)
 
         return SearchResponse(results_count=len(results), data=results)

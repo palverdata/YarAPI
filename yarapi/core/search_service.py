@@ -3,7 +3,13 @@ from typing import List, Dict, Any
 
 from yarapi.config import config
 from yarapi.core.constants import PROCESSOR_MAP, SITE_MAP, SUFFIX_MAP
-from yarapi.models.schemas import SearchRequest, DataSource, ProfileInput, CommentsInput
+from yarapi.models.schemas import (
+    SearchRequest,
+    DataSource,
+    ProfileInput,
+    CommentsInput,
+    TimeseriesInput,
+)
 from yarapi.utils.time import parse_relative_interval
 
 from open_sea.searcher.serp_searcher import SerpSearcher
@@ -106,3 +112,26 @@ async def run_search(
     )
 
     return results
+
+
+async def run_timeseries_search(datasource: DataSource, params: TimeseriesInput):
+    """
+    Retrieve comments for a given post from the specified data source.
+    """
+    if datasource == DataSource.twitter:
+        post_processor = XPostProcessing(
+            XSearcher(
+                queries=None,
+                since=None,
+                until=None,
+            )
+        )
+
+        results = await post_processor.timeseries(
+            query=params.query,
+            granularity=params.granularity,
+            since=params.since,
+            until=params.until,
+        )
+
+        return results

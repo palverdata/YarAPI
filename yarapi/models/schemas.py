@@ -85,3 +85,21 @@ class CommentsInput(BaseModel):
 
     identifier: str = Field(..., description="Post ID or post URL for comments lookup")
     amount: int = Field(10, gt=0, description="Number of comments to retrieve")
+
+
+class TimeseriesInput(BaseModel):
+    """Model for timeseries endpoint input.
+
+    - identifier: username or url
+    - since: start date for the timeseries data
+    - until: end date for the timeseries data
+    """
+
+    query: str = Field(
+        ..., description="Username or profile URL for the timeseries lookup"
+    )
+    granularity: Literal["daily", "weekly", "monthly"] = Field(
+        "daily", description="Granularity of the timeseries data"
+    )
+    since: Optional[datetime] = None
+    until: Optional[datetime] = None
