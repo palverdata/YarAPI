@@ -1,7 +1,7 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
-namespace: hati
+namespace: yarapi
 nameSuffix: -staging
 
 resources:
@@ -11,26 +11,26 @@ patches:
   - patch: |
       - op: replace
         path: /spec/template/spec/containers/0/envFrom/0/configMapRef/name
-        value: hati-staging-env
+        value: yarapi-staging-env
     target:
       kind: Deployment
-      name: hati
+      name: yarapi
   - patch: |
       - op: replace
         path: /spec/hosts/0
-        value: hati-staging.anax.com.br
+        value: yarapi-staging.anax.com.br
       - op: replace
         path: /spec/http/0/route/0/destination/host
-        value: hati-staging.hati.svc.cluster.local
+        value: yarapi-staging.yarapi.svc.cluster.local
     target:
       kind: VirtualService
-      name: hati-virtual-service
+      name: yarapi-virtual-service
 
 labels:
   - includeSelectors: true
     pairs:
-      app: hati-staging
+      app: yarapi-staging
 
 images:
-  - name: palverdata/hati
+  - name: palverdata/yarapi
     newTag: 666679ebbe3293b44cbea54a3b8fe9135c7b10ae
