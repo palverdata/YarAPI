@@ -33,6 +33,4 @@ COPY . /app
 # Ensure /app is writable by all users
 RUN chmod -R 777 /app
 
-RUN chmod -R 777 /app/extensions
-
 ENTRYPOINT ["poetry", "run", "python", "main.py"]
