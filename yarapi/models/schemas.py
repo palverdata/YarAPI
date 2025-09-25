@@ -98,8 +98,8 @@ class TimeseriesInput(BaseModel):
     query: str = Field(
         ..., description="Username or profile URL for the timeseries lookup"
     )
-    granularity: Literal["daily", "weekly", "monthly"] = Field(
-        "daily", description="Granularity of the timeseries data"
+    granularity: Literal["minute", "hour", "day"] = Field(
+        "day", description="Granularity of the timeseries data"
     )
     since: Optional[datetime] = None
     until: Optional[datetime] = None
