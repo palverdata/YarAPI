@@ -18,9 +18,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+      - name: Setup Data Manager SSH Key 
+        run: echo "${{ secrets.DATA_MANAGER_KEY }}" > id_rsa && chmod 600 id_rsa
       - name: "Docker build"
         run: |-
           docker build \
+            --secret id=id_rsa,src=id_rsa \
             $([ $BRANCH = "main" ] && echo "--tag "palverdata/${REPOSITORY}:latest"") \
             --tag "palverdata/$REPOSITORY:$GITHUB_SHA" \
             --tag "palverdata/$REPOSITORY:$BRANCH" \
