@@ -5,6 +5,7 @@ metadata:
 spec:
   hosts:
     - yarapi.palver.com.br
+    - yarapi.anax.com.br
   gateways:
     - istio-system/istio-https-gateway
     - istio-system/palver-com-br-gateway
