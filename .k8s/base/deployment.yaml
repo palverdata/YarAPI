@@ -35,8 +35,8 @@ spec:
                 name: yarapi-env
           resources:
             limits:
-              cpu: "500m"
-              memory: "128Mi"
+              cpu: "2"
+              memory: "4Gi"
             requests:
               cpu: "32m"
               memory: "64Mi"
