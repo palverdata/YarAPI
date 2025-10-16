@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, status, Depends
+from fastapi import APIRouter, HTTPException, status, Depends, Response
 
 from yarapi.models.schemas import (
     SearchRequest,
@@ -29,6 +29,7 @@ router = APIRouter()
 async def search_endpoint(
     datasource: DataSource,
     request: SearchRequest,
+    response: Response,
 ):
     """
     Main endpoint to perform searches on different data sources.
@@ -42,20 +43,20 @@ async def search_endpoint(
         cached, ttl_left = cache.get_with_ttl(cache_key)
 
         if cached is not None:
+            response.headers["X-Cache"] = "HIT"
+            response.headers["X-Cache-TTL-Remaining"] = str(ttl_left)
+            response.headers["Cache-Control"] = f"public, max-age={ttl_left}"
+
             return SearchResponse(
                 results_count=len(cached),
                 data=cached,
-                headers={
-                    "X-Cache": "HIT",
-                    "X-Cache-TTL-Remaining": str(ttl_left),
-                    "Cache-Control": f"public, max-age={ttl_left}",
-                },
             )
 
         results = await run_search(datasource, request)
 
         cache.set(cache_key, results)
 
+        response.headers["X-Cache"] = "MISS"
         return SearchResponse(results_count=len(results), data=results)
     except Exception as e:
         print(f"Unexpected server error: {e}")
@@ -70,7 +71,11 @@ async def search_endpoint(
     response_model=SearchResponse,
     dependencies=[Depends(require_api_user)],
 )
-async def profile_endpoint(datasource: DataSource, request: ProfileInput):
+async def profile_endpoint(
+    datasource: DataSource,
+    request: ProfileInput,
+    response: Response,
+):
     """
     Retrieves a profile from a specific data source.
 
@@ -82,19 +87,18 @@ async def profile_endpoint(datasource: DataSource, request: ProfileInput):
         cached, ttl_left = cache.get_with_ttl(cache_key)
 
         if cached is not None:
+            response.headers["X-Cache"] = "HIT"
+            response.headers["X-Cache-TTL-Remaining"] = str(ttl_left)
+            response.headers["Cache-Control"] = f"public, max-age={ttl_left}"
             return SearchResponse(
                 results_count=1,
                 data=cached,
-                headers={
-                    "X-Cache": "HIT",
-                    "X-Cache-TTL-Remaining": str(ttl_left),
-                    "Cache-Control": f"public, max-age={ttl_left}",
-                },
             )
 
         result = await run_profile_search(datasource, request)
         cache.set(cache_key, result)
 
+        response.headers["X-Cache"] = "MISS"
         return SearchResponse(results_count=1, data=result)
     except Exception as e:
         print(f"Unexpected server error: {e}")
@@ -108,7 +112,11 @@ async def profile_endpoint(datasource: DataSource, request: ProfileInput):
     response_model=SearchResponse,
     dependencies=[Depends(require_api_user)],
 )
-async def comments_endpoint(datasource: DataSource, request: CommentsInput):
+async def comments_endpoint(
+    datasource: DataSource,
+    request: CommentsInput,
+    response: Response,
+):
     """
     Retrieves comments from a post on a specific data source.
 
@@ -121,19 +129,17 @@ async def comments_endpoint(datasource: DataSource, request: CommentsInput):
         cached, ttl_left = cache.get_with_ttl(cache_key)
 
         if cached is not None:
+            response.headers["X-Cache"] = "HIT"
+            response.headers["X-Cache-TTL-Remaining"] = str(ttl_left)
+            response.headers["Cache-Control"] = f"public, max-age={ttl_left}"
             return SearchResponse(
                 results_count=len(cached),
                 data=cached,
-                headers={
-                    "X-Cache": "HIT",
-                    "X-Cache-TTL-Remaining": str(ttl_left),
-                    "Cache-Control": f"public, max-age={ttl_left}",
-                },
             )
 
         results = await run_comments_search(datasource, request)
         cache.set(cache_key, results)
-
+        response.headers["X-Cache"] = "MISS"
         return SearchResponse(results_count=len(results), data=results)
     except Exception as e:
         print(f"Unexpected server error: {e}")
@@ -147,7 +153,11 @@ async def comments_endpoint(datasource: DataSource, request: CommentsInput):
     response_model=SearchResponse,
     dependencies=[Depends(require_api_user)],
 )
-async def timeseries_endpoint(datasource: DataSource, request: TimeseriesInput):
+async def timeseries_endpoint(
+    datasource: DataSource,
+    request: TimeseriesInput,
+    response: Response,
+):
     """
     Retrieves timeseries data for a profile on a specific data source.
     """
@@ -158,19 +168,19 @@ async def timeseries_endpoint(datasource: DataSource, request: TimeseriesInput):
         cached, ttl_left = cache.get_with_ttl(cache_key)
 
         if cached is not None:
+            response.headers["X-Cache"] = "HIT"
+            response.headers["X-Cache-TTL-Remaining"] = str(ttl_left)
+            response.headers["Cache-Control"] = f"public, max-age={ttl_left}"
+
             return SearchResponse(
                 results_count=len(cached),
                 data=cached,
-                headers={
-                    "X-Cache": "HIT",
-                    "X-Cache-TTL-Remaining": str(ttl_left),
-                    "Cache-Control": f"public, max-age={ttl_left}",
-                },
             )
 
         results = await run_timeseries_search(datasource, request)
         cache.set(cache_key, results)
 
+        response.headers["X-Cache"] = "MISS"
         return SearchResponse(results_count=len(results), data=results)
     except Exception as e:
         print(f"Unexpected server error: {e}")
