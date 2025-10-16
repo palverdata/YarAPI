@@ -8,4 +8,4 @@ resources:
 
 images:
   - name: palverdata/yarapi
-    newTag: 04a451e2d42be5e5a40d6b6241bc57d7cbde211f
+    newTag: a5ebf279c5c9332f6e600dcc61d7e25d78124de3
