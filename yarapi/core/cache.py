@@ -3,6 +3,7 @@ import threading
 from collections import OrderedDict
 from typing import Union
 import json
+from yarapi.config import config
 
 
 class LRUTTLCache:
@@ -105,4 +106,4 @@ class LRUTTLCache:
             self._store.clear()
 
 
-cache = LRUTTLCache(maxsize=1000, default_ttl=3600)  # 1 hour default TTL
+cache = LRUTTLCache(maxsize=1000, default_ttl=config.cache_ttl_seconds)

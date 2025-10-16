@@ -32,6 +32,8 @@ class ConfigProtocol(Protocol):
 
     short_backoff_log: bool
 
+    cache_ttl_seconds: int
+
 
 class Config(ConfigProtocol):
     """A class that loads environment variables
@@ -107,6 +109,10 @@ class Config(ConfigProtocol):
             )
             key = os.urandom(32).hex()
         return key
+
+    @property
+    def cache_ttl_seconds(self) -> int:
+        return int(getenv("CACHE_TTL_SECONDS", 60))
 
 
 config = Config()
