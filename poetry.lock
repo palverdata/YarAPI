@@ -1354,7 +1354,7 @@ zendriver = ">=0.5.1,<0.6.0"
 type = "git"
 url = "ssh://git@github.com/palverdata/serp_open_sea.git"
 reference = "HEAD"
-resolved_reference = "190876a57be0257621f89f46b4f7911afd80c8e3"
+resolved_reference = "f59cc8ae8eb78fdb3f4dc3af19bb44757294a756"
 
 [[package]]
 name = "openpyxl"
